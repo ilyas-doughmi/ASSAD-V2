@@ -28,4 +28,11 @@ Class Admin extends User{
         ];
     }
 
+    public function approveGuide($guide_id){
+        $query = "UPDATE users SET isActive = 1 WHERE id = :guide_id";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":guide_id",$guide_id);
+        $stmt->execute();
+    }
+
 }
