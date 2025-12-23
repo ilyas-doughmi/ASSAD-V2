@@ -23,13 +23,13 @@ if(isset($_POST["users_count"])){
     }
 }
 
-// if(isset($_POST["users"])){
-//     $type = $_POST["users"];
-//     switch($type){
-//         case "all": echo getUsers("");break;
-//         case "pending": echo getUsers("");break;
-//         default:
-//         echo "no one found";
-//         break;
-//     }
-// }
+if(isset($_POST["users"])){
+    $type = $_POST["users"];
+    switch($type){
+        case "all": echo json_encode($all_users["users"]);break;
+        case "pending": echo json_encode($guides["users"]) ;break;
+        default:
+        echo "no one found";
+        break;
+    }
+}
