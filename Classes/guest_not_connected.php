@@ -9,6 +9,7 @@ Class guest_not_connected extends User{
     {
         $this->pdo = $pdo;
     }
+    
     public function register($email,$password,$fullname,$role){
         $this->email = $email;
         $password = password_hash($password,PASSWORD_DEFAULT);
@@ -36,7 +37,7 @@ Class guest_not_connected extends User{
     $stmt->bindParam(":password",$this->password);
     $stmt->bindParam(":role",$this->role);
     $stmt->bindValue(":isActive",$isVisitor);
-    
+
     try{    
         $stmt->execute();
     }catch(PDOException $e){
@@ -44,4 +45,53 @@ Class guest_not_connected extends User{
     }
     
     }
+
+
+    public function signin($email, $password)
+{
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        header("location: ../../login.php?message=Invalid email format");
+        exit();
+    }
+
+    $query = "SELECT * FROM users WHERE email = :email";
+    $stmt = $this->pdo->connect()->prepare($query);
+    $stmt->bindParam(":email", $email);
+    $stmt->execute();
+
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        header("location: ../../login.php?message=account not found");
+        exit();
+    }
+
+    if (!password_verify($password, $user["password"])) {
+        header("location: ../../login.php?message=password problem");
+        exit();
+    }
+
+    if ($user["isBanned"] == 1) {
+        header("location: ../../index.php?message=account_banned");
+        exit();
+    }
+
+    session_start();
+    $_SESSION["id"] = $user["id"];
+    $_SESSION["role"] = $user["role"];
+    $_SESSION["isActive"] = $user["isActive"];
+
+    switch ($user["role"]) {
+        case 'admin':
+            header("location: ../../pages/admin/admin_dashboard.php");
+            break;
+        case 'guide':
+            header("location: ../../pages/guide/guide_dashboard.php");
+            break;
+        default:
+            header("location: ../../index.php");
+    }
+    exit();
+}
+
 }
