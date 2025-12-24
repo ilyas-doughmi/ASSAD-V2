@@ -51,4 +51,12 @@ Class Animal{
 
         $stmt->execute();
     }
+
+    public function deleteAnimal($id){
+        $query = "DELETE FROM animal WHERE id = :animal_id";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":animal_id",$id);
+
+        $stmt->execute();
+    }
 }
