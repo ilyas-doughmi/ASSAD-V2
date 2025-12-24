@@ -41,4 +41,10 @@ Class Admin extends User{
         $stmt->bindParam(":guide_id",$guide_id);
         $stmt->execute();
     }
+    public function banAccount($guide_id){
+        $query = "UPDATE users SET isBanned = 1 , isActive = 1 WHERE id = :guide_id";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":guide_id",$guide_id);
+        $stmt->execute();
+    }
 }
