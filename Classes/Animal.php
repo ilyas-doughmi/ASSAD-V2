@@ -13,11 +13,19 @@ Class Animal{
     private $habitat_id;
     private $vues;
 
-    private function findById($id)
+
+
+
+    public function __construct($pdo)
     {
-        $query = "SELECT * FROM animal WHERE id = :id";
+        $this->pdo = $pdo;
+    }
+
+
+    public function getAnimalById($animal_id){
+       $query = "SELECT * FROM animal WHERE id = :id";
         $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(":id",$id);
+        $stmt->bindParam(":id",$animal_id);
         $stmt->execute();
 
         $animal = $stmt->fetch();
@@ -37,24 +45,6 @@ Class Animal{
         $this->vues = $animal["vues"];
 
         return true;
-    }
-
-
-    public function __construct($pdo)
-    {
-        $this->pdo = $pdo;
-    }
-
-    public function getAnimalById($animal_id){
-        $query = "SELECT * FROM Animal WHERE id = :animal_id";
-        $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(":animal_id",$animal_id);
-
-        try{
-            $stmt->execute();
-        }catch(PDOException $e){
-            die($e->getMessage());
-        }
 
     }
 
@@ -99,7 +89,7 @@ Class Animal{
 
     public function editAnimal($nom,$espece,$pays,$habitat_id,$description,$alimentation,$image,$id){
 
-        $this->findById($id);
+        $this->getAnimalById($id);
 
         $query = "UPDATE animal 
         SET nom = :nom, espece = :espece, pays_origin = :pays, habitat_id = :habitat_id, description_courte = :description, alimentation = :alimentation, image = :image 
