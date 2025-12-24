@@ -39,5 +39,16 @@ Class Habitat{
             "habitats" => $habitat
         ];   
     }
+
+    public function createHabitat($nom,$description,$image,$type_climat,$zone_zoo){
+        $query = "INSERT INTO habitat (nom, description, image, zone, type_climat) VALUES (:nom,:description,:image,:zone,:climat)";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":nom",$nom);
+        $stmt->bindParam(":description",$description);
+        $stmt->bindParam(":image",$image);
+        $stmt->bindParam(":zone",$zone_zoo);
+        $stmt->bindParam(":climat",$type_climat);
+        $stmt->execute();
+    }
     
 }
