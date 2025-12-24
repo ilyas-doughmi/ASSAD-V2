@@ -20,4 +20,18 @@ Class Animal{
         }
 
     }
+
+    public function getAllAnimals(){
+        $query = "SELECT * FROM Animal";
+        $stmt = $this->pdo->connect()->query($query);
+        $stmt->execute();
+        $animals = $stmt->fetchAll();
+        $count = count($animals);
+
+
+        return [
+            "count" => $count,
+            "animals" => $animals
+        ];
+    }
 }
