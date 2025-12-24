@@ -1,5 +1,14 @@
 <?php
-require_once("../../db.php");
+
+
+require_once("../../../Classes/db.php");
+require_once("../../../Classes/Habitat.php");
+
+
+$pdo = new db();
+$habitat = new Habitat($pdo);
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $nom = $_POST['nom'];
@@ -9,21 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $image = $_POST['image']; 
 
-    $query = "INSERT INTO habitat (nom, description, image) VALUES (?, ?, ?)";
-    
-    $stmt = mysqli_prepare($conn, $query);
-    
-    if ($stmt === false) {
-        die("Erreur de préparation : " . mysqli_error($conn));
-    }
 
-    mysqli_stmt_bind_param($stmt, "sss", $nom, $description, $image);
+    $habitat->createHabitat($nom,$description,$image,$climat,$zone);
 
-    if (mysqli_stmt_execute($stmt)) {
-        header("Location: ../../../pages/admin/manage_habitats.php?msg=added");
-        exit();
-    } else {
-        echo "Erreur d'exécution : " . mysqli_error($conn);
-    }
+    header("location: ../../../pages/admin/manage_habitats.php");
+    exit;
 }
-?>
+
