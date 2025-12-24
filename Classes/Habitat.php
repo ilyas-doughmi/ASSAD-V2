@@ -31,7 +31,13 @@ Class Habitat{
         $query = "SELECT * FROM habitat";
         $stmt = $this->pdo->connect()->query($query);
         $stmt->execute();
-        return $stmt->fetchAll();       
+
+        $habitat = $stmt->fetchAll();
+        $habitat_count = count($habitat);
+        return [
+            "count" => $habitat_count,
+            "habitats" => $habitat
+        ];   
     }
     
 }
