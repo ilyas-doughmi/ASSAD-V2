@@ -26,5 +26,12 @@ Class Habitat{
 
         return $stmt->fetchAll();
     }
+
+    public function getAllHabitat(){
+        $query = "SELECT * FROM habitat";
+        $stmt = $this->pdo->connect()->query($query);
+        $stmt->execute();
+        return $stmt->fetchAll();       
+    }
     
 }
