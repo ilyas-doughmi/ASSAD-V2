@@ -10,5 +10,5 @@ $admin = new Admin($pdo);
 if($_SERVER["REQUEST_METHOD"] == "POST"){    
     $guide_id = $_POST["user_id"];
     $admin->rejectGuide($guide_id);
-    echo "Active Successfully";
+    echo "rejected Successfully";
 }
