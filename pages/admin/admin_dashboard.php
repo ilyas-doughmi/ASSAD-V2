@@ -267,7 +267,7 @@ show_app();
              function refuseRequest(id){
                 let data = new FormData();
                 data.append("user_id",id);
-                fetch("../../includes/admin/actions/approve_guide.php",{
+                fetch("../../includes/admin/actions/refuse_guide.php",{
                     method: "POST",
                     body: data
                 })
