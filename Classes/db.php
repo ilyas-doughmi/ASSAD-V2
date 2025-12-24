@@ -27,8 +27,7 @@ class db
                 die($e->getMessage());
             }
         }
-        else{
-            return self::$instance;
-        }
+        return self::$instance;
+
     }
 }
