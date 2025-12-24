@@ -24,7 +24,12 @@ Class Habitat{
 
         $stmt->execute();
 
-        return $stmt->fetchAll();
+        $data = $stmt->fetchAll();
+
+        $this->id = $data["id"];
+        $this->nom = $data["nom"];
+
+
     }
 
     public function getAllHabitat(){
