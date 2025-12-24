@@ -1,5 +1,10 @@
 <?php
-require_once("../../db.php");
+require_once("../../../Classes/db.php");
+require_once("../../../Classes/Animal.php");
+
+
+$pdo = new db();
+$animal = new Animal($pdo);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
@@ -11,24 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $alimentation = $_POST["alimentation"];
     $image = $_POST["image"];
 
-    $query = "INSERT INTO animal (nom, espece, pays_origin, habitat_id, description_courte, alimentation, image, vues) VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
-    
-    $stmt = mysqli_prepare($conn, $query);
+    $animal->createAnimal($nom,$espece,$pays,$habitat_id,$description,$alimentation,$image);
 
-    if ($stmt === false) {
-        die("Error prepare statement: " . mysqli_error($conn));
-    }
-
-    mysqli_stmt_bind_param($stmt, "sssisss", $nom, $espece, $pays, $habitat_id, $description, $alimentation, $image);
-
-    try {
-        if(mysqli_stmt_execute($stmt)){
-            echo "success";
-        } else {
-            echo "error_exec: " . mysqli_error($conn);
-        }
-    } catch (mysqli_sql_exception $e) {
-        echo "error: " . $e->getMessage();
-    }
 }
 ?>
