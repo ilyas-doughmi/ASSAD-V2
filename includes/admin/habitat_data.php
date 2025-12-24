@@ -1,29 +1,18 @@
 <?php
-require_once("../db.php");
+require_once("../../Classes/db.php");
+require_once("../../Classes/Habitat.php");
+
+
+$pdo = new db();
+$habitat = new Habitat($pdo);
+
+$habitat = $habitat->getAllHabitat();
 
 
 if(isset($_POST["habitat"])){
-    echo getAnimals();
+    echo json_encode($habitat["habitats"]);
 }
 
 if(isset($_POST["habitat_count"])){
-    echo getCount();
-}
-
-
-function getAnimals(){
-    global $conn;
-    $query = "SELECT * FROM habitat";
-    $run = mysqli_query($conn,$query);
-    $result = mysqli_fetch_all($run,MYSQLI_ASSOC);
-
-    return json_encode($result);
-}
-
-function getCount(){
-    global $conn;
-    $query = "SELECT COUNT(*) as count FROM habitat";
-    $run = mysqli_query($conn,$query);
-    $result = mysqli_fetch_assoc($run);
-    return $result["count"];
+    echo $habitat["count"];
 }
