@@ -9,14 +9,8 @@ Class Admin extends User{
         $this->pdo = $pdo;
     }
 
-    public function getAllUsers($cond){
-        $condition = "";
-        switch($cond){
-            case "all": $condition = "";break;
-            case "guides_ver": $condition = "WHERE isActive = 0 AND role = 'guide'";break;
-            default : echo "nothing";break;
-        }
-        $query = "SELECT * FROM users $condition";
+    public function getAllUsers(){
+        $query = "SELECT * FROM users";
         $stmt = $this->pdo->connect()->query($query);
         $stmt->execute();
         $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
