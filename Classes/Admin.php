@@ -35,4 +35,11 @@ Class Admin extends User{
         $stmt->execute();
     }
 
+    public function rejectGuide($guide_id){
+        $query = "UPDATE users SET isBanned = 1 WHERE id = ?";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":guide_id",$guide_id);
+        $stmt->execute();
+    }
+
 }
