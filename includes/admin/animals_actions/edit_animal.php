@@ -1,5 +1,10 @@
 <?php
-require_once("../../db.php");
+require_once("../../../Classes/db.php");
+require_once("../../../Classes/Animal.php");
+
+
+$pdo = new db();
+$animal = new Animal($pdo);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
@@ -12,20 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $alimentation = $_POST["alimentation"];
     $image = $_POST["image"];
 
-    $query = "UPDATE animal SET nom = ?, espece = ?, pays_origin = ?, habitat_id = ?, description_courte = ?, alimentation = ?, image = ? WHERE id = ?";
-    $stmt = mysqli_prepare($conn, $query);
-
-    if ($stmt === false) {
-        die("Error prepare statement" . mysqli_error($conn));
-    }
-
-    mysqli_stmt_bind_param($stmt, "sssisssi", $nom, $espece, $pays, $habitat_id, $description, $alimentation, $image, $id);
-
-    try {
-        mysqli_stmt_execute($stmt);
-        echo "success";
-    } catch (mysqli_sql_exception $e) {
-        echo "error: " . $e->getMessage();
-    }
+  $animal->editAnimal($nom,$espece,$pays,$habitat_id,$description,$alimentation,$image,$id);
 }
 ?>
