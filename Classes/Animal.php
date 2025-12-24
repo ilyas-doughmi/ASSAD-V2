@@ -3,6 +3,43 @@
 Class Animal{
     private $pdo;
 
+    private $id;
+    private $nom;
+    private $espece;
+    private $image;
+    private $description;
+    private $alimentation;
+    private $paysOrigin;
+    private $habitat_id;
+    private $vues;
+
+    private function findById($id)
+    {
+        $query = "SELECT * FROM animal WHERE id = :id";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":id",$id);
+        $stmt->execute();
+
+        $animal = $stmt->fetch();
+
+        if (!$animal) {
+            return false;
+        }
+
+        $this->id = $animal["id"];
+        $this->nom = $animal["nom"];
+        $this->espece = $animal["espece"];
+        $this->paysOrigin = $animal["pays_origin"];
+        $this->habitat_id = $animal["habitat_id"];
+        $this->description = $animal["description_courte"];
+        $this->alimentation = $animal["alimentation"];
+        $this->image = $animal["image"];
+        $this->vues = $animal["vues"];
+
+        return true;
+    }
+
+
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
@@ -55,6 +92,27 @@ Class Animal{
     public function deleteAnimal($id){
         $query = "DELETE FROM animal WHERE id = :animal_id";
         $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":animal_id",$id);
+
+        $stmt->execute();
+    }
+
+    public function editAnimal($nom,$espece,$pays,$habitat_id,$description,$alimentation,$image,$id){
+
+        $this->findById($id);
+
+        $query = "UPDATE animal 
+        SET nom = :nom, espece = :espece, pays_origin = :pays, habitat_id = :habitat_id, description_courte = :description, alimentation = :alimentation, image = :image 
+        WHERE id = :animal_id";
+
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":nom",$nom);
+        $stmt->bindParam(":espece",$espece);
+        $stmt->bindParam(":pays",$pays);
+        $stmt->bindParam(":habitat_id",$habitat_id);
+        $stmt->bindParam(":description",$description);
+        $stmt->bindParam(":alimentation",$alimentation);
+        $stmt->bindParam(":image",$image);
         $stmt->bindParam(":animal_id",$id);
 
         $stmt->execute();
