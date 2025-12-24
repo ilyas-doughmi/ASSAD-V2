@@ -34,4 +34,21 @@ Class Animal{
             "animals" => $animals
         ];
     }
+
+
+    public function createAnimal($nom,$espece,$pays,$habitat_id,$description,$alimentation,$image){
+        $query = "INSERT INTO animal (nom, espece, pays_origin, habitat_id, description_courte, alimentation, image, vues) VALUES 
+                (:nom,:espece,:pays_origin,:habitat_id,:description,:alimentation,:image, 0)";
+
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":nom",$nom);
+        $stmt->bindParam(":espece",$espece);
+        $stmt->bindParam(":pays_origin",$pays);
+        $stmt->bindParam(":habitat_id",$habitat_id);
+        $stmt->bindParam("description",$description);
+        $stmt->bindParam(":alimentation",$alimentation);
+        $stmt->bindParam(":image",$image);
+
+        $stmt->execute();
+    }
 }
