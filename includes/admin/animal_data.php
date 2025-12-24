@@ -1,29 +1,18 @@
 <?php
-require_once("../db.php");
+require_once("../../Classes/db.php");
+require_once("../../Classes/Animal.php");
+
+
+$pdo = new db();
+$animal = new Animal($pdo);
+$animals = $animal->getAllAnimals();
+$animals_count = $animals["count"];
 
 
 if(isset($_POST["animals"])){
-    echo getAnimals();
+    echo json_encode($animals["animals"]);  
 }
 
 if(isset($_POST["animals_count"])){
-    echo getCount();
-}
-
-
-function getAnimals(){
-    global $conn;
-    $query = "SELECT * FROM animal";
-    $run = mysqli_query($conn,$query);
-    $result = mysqli_fetch_all($run,MYSQLI_ASSOC);
-
-    return json_encode($result);
-}
-
-function getCount(){
-    global $conn;
-    $query = "SELECT COUNT(*) as count FROM animal";
-    $run = mysqli_query($conn,$query);
-    $result = mysqli_fetch_assoc($run);
-    return $result["count"];
+    echo $animals_count;
 }
