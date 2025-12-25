@@ -6,6 +6,10 @@ Class User{
     protected $email;
     protected $password;
     protected $role;
+    protected $isActive;
+    protected $isBanned;
+
+    // getters
 
     public function getId(): int
     {
@@ -25,6 +29,16 @@ Class User{
     public function getRole(): string{
         return $this->role;
     }
+    
+    public function getIsAtive(): string{
+        return $this->isActive;
+    }
+
+    public function getIsBanned(): string{
+        return $this->isBanned;
+    }
+
+    // setters
 
     public function setId(int $id): void
     {
@@ -50,5 +64,15 @@ Class User{
     {
         $this->role = $role;
     }
+
+    public function setIsActive(int $isActive): void
+    {
+        $this->isActive = $isActive;
+    }
+
+    public function setIsBanned(int $isBanned): void{
+        $this->isBanned = $isBanned;
+    }
+
 
 }
