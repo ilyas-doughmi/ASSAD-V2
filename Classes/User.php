@@ -26,4 +26,29 @@ Class User{
         return $this->role;
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function setFullName(string $fullName): void
+    {
+        $this->full_name = $fullName;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = password_hash($password,PASSWORD_DEFAULT);
+    }
+
+    public function setRole(string $role): void
+    {
+        $this->role = $role;
+    }
+
 }
