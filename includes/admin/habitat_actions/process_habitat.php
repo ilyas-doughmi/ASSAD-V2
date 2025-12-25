@@ -11,17 +11,15 @@ $habitat = new Habitat($pdo);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    $nom = $_POST['nom'];
-    $zone = $_POST['zone_zoo'];
-    $climat = $_POST['type_climat'];
-    $description = $_POST['description'];
-    
-    $image = $_POST['image']; 
+    $habitat->setNom($_POST['nom']);
+    $habitat->setZoneZoo($_POST['zone_zoo']);
+    $habitat->setTypeClimat($_POST['type_climat']);
+    $habitat->setDescription($_POST['description']);
+    $habitat->setImage($_POST['image']);
 
+    $habitat->createHabitat();
 
-    $habitat->createHabitat($nom,$description,$image,$climat,$zone);
-
-    header("location: ../../../pages/admin/manage_habitats.php");
+    header('Location: ../../../pages/admin/manage_habitats.php');
     exit;
 }
 
