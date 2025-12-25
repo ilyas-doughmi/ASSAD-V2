@@ -1,15 +1,15 @@
 <?php 
 
 require_once("../../Classes/db.php");
-require_once("../../Classes/guest_not_connected.php");
+require_once("../../Classes/User.php");
 
 
 $pdo = new db;
-$guest = new guest_not_connected($pdo);
+$guest = new User($pdo);
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-    $guest->signin($email,$password);
+    $guest->setEmail($_POST["email"]);
+    $guest->setPassword($_POST["password"]);
+    $guest->signin();
 }
 
