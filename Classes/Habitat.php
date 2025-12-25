@@ -129,4 +129,12 @@ class Habitat
             ':climat' => $this->typeClimat
         ]);
     }
+
+    public function deleteHabitat($habitat_id): bool
+    {
+        $query = "DELETE FROM Habitat WHERE id = :habitat_id";
+        $stmt = $this->pdo->connect()->prepare($query);
+
+        return $stmt->execute([':habitat_id' => $habitat_id]);
+    }
 }
