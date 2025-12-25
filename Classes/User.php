@@ -61,7 +61,7 @@ class User
 
     public function setPassword(string $password): void
     {
-        $this->password = password_hash($password, PASSWORD_DEFAULT);
+        $this->password = $password;
     }
 
     public function setRole(string $role): void
@@ -69,41 +69,41 @@ class User
         $this->role = $role;
     }
 
+    // database methodes
 
-    public function register(): bool{
+    public function register(): bool
+    {
         $isVisitor = 1;
 
-        if($this->role == "admin"){
+        if ($this->role == "admin") {
             return false;
-        }
-        else if($this->role == "guide"){
+        } else if ($this->role == "guide") {
             $isVisitor = 0;
         }
 
-        if(!filter_var($this->email,FILTER_VALIDATE_EMAIL)){
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
 
-        
+
 
         $query = "INSERT INTO users(full_name,email,password,role,isBanned,isActive)
                 VALUES(:fullname,:email,:password,:role,0,:isactive)";
-        
-        $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(":fullname",$this->full_name);
-        $stmt->bindParam(":email",$this->email);
-        $stmt->bindParam(":password",$this->password);
-        $stmt->bindParam(":role",$this->role);
-        $stmt->bindParam(":isactive",$isVisitor);
 
-        try{
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":fullname", $this->full_name);
+        $stmt->bindParam(":email", $this->email);
+        $stmt->bindParam(":password", password_hash($this->password,PASSWORD_DEFAULT));
+        $stmt->bindParam(":role", $this->role);
+        $stmt->bindParam(":isactive", $isVisitor);
+
+        try {
             $stmt->execute();
             return true;
-
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             return false;
         }
-        
+
 
 
 
@@ -111,8 +111,10 @@ class User
         return true;
     }
 
-    public function signin($email, $password)
+    public function signin()
     {
+        $email = $this->email;
+        $password = $this->password;
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             header("location: ../../login.php?message=Invalid email format");
             exit();
