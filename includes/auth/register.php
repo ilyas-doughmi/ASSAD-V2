@@ -1,17 +1,24 @@
 <?php 
 
 require_once("../../Classes/db.php");
-require_once("../../Classes/guest_not_connected.php");
+require_once("../../Classes/User.php");
 
 
 $pdo = new db;
 
-$guest = new guest_not_connected($pdo);
+
+$guest = new User($pdo);
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $role = $_POST["role"];
-    $nom = $_POST["nom"];
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-    $guest->register($email,$password,$nom,$role);
+    $guest->setEmail($_POST["email"]);
+    $guest->setFullName($_POST["nom"]);
+    $guest->setPassword($_POST["password"]);
+    $guest->setRole($_POST["role"]);
+    if($guest->register()){
+        header("location: ../../login.php?message=register success");
+        exit();
+    }
+    else{
+        echo "register problem";
+    }
 }
