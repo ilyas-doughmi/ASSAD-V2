@@ -1,12 +1,15 @@
 <?php 
 require_once("../../Classes/db.php");
 require_once("../../Classes/User.php");
+require_once("../../Classes/guide.php");
+
 
 
 $pdo = new db();
 $user = new User($pdo);
+$guide = new guide($pdo);
 $all_users = $user->getAllUsers();
-$guides = $user->getAllUsers("guides_ver");
+$guides = $guide->getGuides();
 
 
 
