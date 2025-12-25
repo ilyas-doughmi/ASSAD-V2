@@ -6,5 +6,24 @@ Class User{
     protected $email;
     protected $password;
     protected $role;
-    protected $isBanned;
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->full_name;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function getRole(): string{
+        return $this->role;
+    }
+
 }
