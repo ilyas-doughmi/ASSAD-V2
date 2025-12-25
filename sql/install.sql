@@ -17,6 +17,7 @@ CREATE TABLE Animal (
     description_courte TEXT,
     alimentation VARCHAR(255),
     habitat_id INT,
+    vues INT,
 
     FOREIGN KEY (habitat_id) REFERENCES Habitat(id)
         ON DELETE SET NULL
@@ -150,3 +151,10 @@ INSERT INTO Animal (nom, espece, pays_origin, habitat_id, image, description_cou
 ('Sobek', 'Crocodylus niloticus', 'Égypte', 6, 'https://images.unsplash.com/photo-1516021677334-93c0490f2378', 'Le redoutable gardien des eaux du Nil.', 'Carnivore');
 
 
+
+
+ALTER TABLE Habitat
+ADD COLUMN type_climat VARCHAR(255);
+
+ALTER TABLE Habitat
+ADD COLUMN zone VARCHAR(255);
