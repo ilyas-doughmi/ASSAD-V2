@@ -10,7 +10,7 @@ class User
     protected $password;
     protected $role;
 
-    private $pdo;
+    protected $pdo;
 
 
     public function __construct($pdo)
