@@ -1,59 +1,132 @@
-<?php 
+<?php
 
-Class Habitat{
-    private $id;
-    private $nom;
-    private $description;
-    private $image;
-    private $typeClimat;
-    private $zoneZoo;
-
-
+class Habitat
+{
     private $pdo;
 
+    private int $id;
+    private string $nom;
+    private string $description;
+    private string $image;
+    private string $typeClimat;
+    private string $zoneZoo;
 
     public function __construct($pdo)
     {
         $this->pdo = $pdo;
     }
 
-    public function getHabitatById($id){
-        $query = "SELECT * FROM habitat WHERE id = :habitat_id";
-        $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(":habitat_id",$id);
+    // getters
 
-        $stmt->execute();
-
-        $data = $stmt->fetchAll();
-
-        $this->id = $data["id"];
-        $this->nom = $data["nom"];
-
-
+    public function getId(): int
+    {
+        return $this->id;
     }
 
-    public function getAllHabitat(){
+    public function getNom(): string
+    {
+        return $this->nom;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function getTypeClimat(): string
+    {
+        return $this->typeClimat;
+    }
+
+    public function getZoneZoo(): string
+    {
+        return $this->zoneZoo;
+    }
+
+    // setters
+
+    public function setNom(string $nom): void
+    {
+        $this->nom = $nom;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function setImage(string $image): void
+    {
+        $this->image = $image;
+    }
+
+    public function setTypeClimat(string $typeClimat): void
+    {
+        $this->typeClimat = $typeClimat;
+    }
+
+    public function setZoneZoo(string $zoneZoo): void
+    {
+        $this->zoneZoo = $zoneZoo;
+    }
+
+    // database methods
+
+    public function getHabitatById(int $id): ?array
+    {
+        $query = "SELECT * FROM habitat WHERE id = :id";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$data) {
+            return null;
+        }
+
+        $this->id = $data['id'];
+        $this->setNom($data['nom']);
+        $this->setDescription($data['description']);
+        $this->setImage($data['image']);
+        $this->setZoneZoo($data['zone']);
+        $this->setTypeClimat($data['type_climat']);
+
+        return $data;
+    }
+
+    public function getAllHabitat(): array
+    {
         $query = "SELECT * FROM habitat";
         $stmt = $this->pdo->connect()->query($query);
-        $stmt->execute();
+        $habitats = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $habitat = $stmt->fetchAll();
-        $habitat_count = count($habitat);
         return [
-            "count" => $habitat_count,
-            "habitats" => $habitat
-        ];   
+            'count' => count($habitats),
+            'habitats' => $habitats
+        ];
     }
 
-    public function createHabitat($nom,$description,$image,$type_climat,$zone_zoo){
-        $query = "INSERT INTO habitat (nom, description, image, zone, type_climat) VALUES (:nom,:description,:image,:zone,:climat)";
+    public function createHabitat(): bool
+    {
+        $query = "
+            INSERT INTO habitat (nom, description, image, zone, type_climat)
+            VALUES (:nom, :description, :image, :zone, :climat)
+        ";
+
         $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(":nom",$nom);
-        $stmt->bindParam(":description",$description);
-        $stmt->bindParam(":image",$image);
-        $stmt->bindParam(":zone",$zone_zoo);
-        $stmt->bindParam(":climat",$type_climat);
-        $stmt->execute();
+
+        return $stmt->execute([
+            ':nom' => $this->nom,
+            ':description' => $this->description,
+            ':image' => $this->image,
+            ':zone' => $this->zoneZoo,
+            ':climat' => $this->typeClimat
+        ]);
     }
-    
 }
