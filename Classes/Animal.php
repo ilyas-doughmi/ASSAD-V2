@@ -116,7 +116,7 @@ class Animal
     {
         $query = "SELECT * FROM animal WHERE id = :id";
         $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':id', $id);
         $stmt->execute();
 
         $animal = $stmt->fetch(PDO::FETCH_ASSOC);

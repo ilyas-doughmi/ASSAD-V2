@@ -9,18 +9,7 @@ Class Admin extends User{
         $this->pdo = $pdo;
     }
 
-    public function getAllUsers(){
-        $query = "SELECT * FROM users";
-        $stmt = $this->pdo->connect()->query($query);
-        $stmt->execute();
-        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $count = count($users);
-        
-        return[
-            'count' => $count,
-            'users' => $users
-        ];
-    }
+
 
     public function approveGuide($guide_id){
         $query = "UPDATE users SET isActive = 1 WHERE id = :guide_id";
