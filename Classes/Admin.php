@@ -2,12 +2,6 @@
 
 Class Admin extends User{
 
-    public function __construct($pdo)
-    {
-        $this->pdo = $pdo;
-    }
-
-
 
     public function approveGuide($guide_id){
         $query = "UPDATE users SET isActive = 1 WHERE id = :guide_id";
