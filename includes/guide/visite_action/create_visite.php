@@ -1,8 +1,8 @@
 <?php
-require_once("../../db.php");
+require_once("../../../Classes/db.php");
+require_once("../../../Classes/Tour.php");
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    
     
     $image = $_POST['image'];
     $titre = $_POST['title'];
@@ -15,18 +15,25 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $guide_id = $_POST["guide_id"];
     $status = "open";
 
-    $query = "INSERT INTO tours(titre,description,date_heure_debut,duree_minutes,prix,langue,capacity_max
-    ,guide_id,status,tour_image) VALUES(?,?,?,?,?,?,?,?,?,?)";
-    
-    $stmt = mysqli_prepare($conn,$query);
-       if($stmt === false){
-        die("Error prepare statement".mysqli_error($conn));
+    $db = new db();
+    $pdo = $db->connect();
+
+    $tour = new Tour($pdo);
+    $tour->setTitle($titre);
+    $tour->setDescription($description);
+    $tour->setDateHeureDebut($date_heure);
+    $tour->setDureeMinutes($duree);
+    $tour->setPrix($prix);
+    $tour->setLangue($langue);
+    $tour->setCapacityMax($capacite);
+    $tour->setGuideId($guide_id);
+    $tour->setStatus($status);
+    $tour->setTourImage($image);
+
+    try {
+        $tourId = $tour->createTour();
+        echo $tourId;
+    } catch (Exception $e) {
+        die("Error creating tour: " . $e->getMessage());
     }
-
-    mysqli_stmt_bind_param($stmt,"sssidsiiss",$titre,$description,$date_heure,$duree,$prix,$langue,$capacite,$guide_id,$status,$image);
-
-        mysqli_stmt_execute($stmt);
-        echo mysqli_insert_id($conn);
- 
- 
 }
