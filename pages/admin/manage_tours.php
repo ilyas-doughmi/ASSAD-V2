@@ -129,16 +129,21 @@ require_role("admin");
                     </thead>
                     <tbody class="divide-y divide-white/5">
                         <?php
-                        include '../../includes/db.php';
-                        $q = mysqli_query($conn, "SELECT * FROM tours");
-                        while($row = mysqli_fetch_assoc($q)){
+                        require_once '../../Classes/db.php';
+                        require_once '../../Classes/Tour.php';
+                        $pdo = new db();
+                        $tour = new Tour($pdo);
+                        $stmt = $pdo->connect()->query("SELECT * FROM tours ORDER BY date_heure_debut DESC");
+                        $tours = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                        foreach($tours as $row){
                             echo '<tr>';
-                            echo '<td class="px-6 py-4">'.$row['id'].'</td>';
-                            echo '<td class="px-6 py-4">'.$row['titre'].'</td>';
-                            echo '<td class="px-6 py-4">'.$row['guide_id'].'</td>';
-                            echo '<td class="px-6 py-4">'.$row['date_heure_debut'].'</td>';
-                            echo '<td class="px-6 py-4">'.$row['prix'].'</td>';
-                            echo '<td class="px-6 py-4">'.$row['status'].'</td>';
+                            echo '<td class="px-6 py-4">'.htmlspecialchars($row['id']).'</td>';
+                            echo '<td class="px-6 py-4">'.htmlspecialchars($row['titre']).'</td>';
+                            echo '<td class="px-6 py-4">'.htmlspecialchars($row['guide_id']).'</td>';
+                            echo '<td class="px-6 py-4">'.htmlspecialchars($row['date_heure_debut']).'</td>';
+                            echo '<td class="px-6 py-4">'.htmlspecialchars($row['prix']).' DH</td>';
+                            echo '<td class="px-6 py-4"><span class="px-2 py-1 text-xs rounded '.($row['status'] == 'open' ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400').'">'.htmlspecialchars($row['status']).'</span></td>';
                             echo '</tr>';
                         }
                         ?>
