@@ -1,14 +1,13 @@
 <?php
 require_once("../../../Classes/db.php");
 require_once("../../../Classes/User.php");
-require_once("../../../Classes/Admin.php");
 
 
 $pdo = new db();
-$admin = new Admin($pdo);
+$user = new User($pdo);
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $guide_id = $_POST["user_id"];
-    $admin->banAccount($guide_id);
+    $user_id = $_POST["user_id"];
+    $user->banAccount($user_id);
     echo "ban Successfully";
 }
