@@ -78,16 +78,36 @@ class tour_step
         ]);
     }
 
-    public function editStep(){
-
+    public function editStep($id){
+        $query = "UPDATE tour_step SET titre_etape = :titre, description_etape = :description, order_etape = :order, tour_id = :tour_id WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([
+            ':titre' => $this->titre_etape,
+            ':description' => $this->description_etape,
+            ':order' => $this->order_etape,
+            ':tour_id' => $this->tour_id,
+            ':id' => $id
+        ]);
     }
 
     public function deleteStep($id){
-
+        $query = "DELETE FROM tour_step WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':id' => $id]);
     }
 
     public function getStepInfo($id){
+        $query = "SELECT * FROM tour_step WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
+    public function getStepsByTourId($tour_id){
+        $query = "SELECT * FROM tour_step WHERE tour_id = :tour_id ORDER BY order_etape ASC";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([':tour_id' => $tour_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 }
