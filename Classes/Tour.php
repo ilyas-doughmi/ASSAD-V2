@@ -135,7 +135,7 @@ class tour
     public function getToursByGuide(int $guide_id): array
     {
         $query = "SELECT * FROM tours WHERE guide_id = :guide_id ORDER BY date_heure_debut DESC";
-        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":guide_id", $guide_id);
         try{
             $stmt->execute();
@@ -148,7 +148,7 @@ class tour
     public function getUpcomingTours(int $guide_id): array
     {
         $query = "SELECT * FROM tours WHERE guide_id = :guide_id AND date_heure_debut >= NOW() ORDER BY date_heure_debut ASC";
-        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":guide_id", $guide_id);
         try{
             $stmt->execute();
@@ -156,5 +156,27 @@ class tour
         }catch(PDOException $e){
             return [];
         }
+    }
+
+    public function createTour(){
+        $query = "INSERT INTO tours(titre,description,date_heure_debut,duree_minutes,prix,langue,capacity_max,guide_id,status,tour_image) 
+                  VALUES(:titre, :description, :date_heure, :duree, :prix, :langue, :capacity, :guide_id, :status, :image)";
+        
+        $stmt = $this->pdo->prepare($query);
+        
+        $stmt->execute([
+            ':titre' => $this->title,
+            ':description' => $this->description,
+            ':date_heure' => $this->date_heure_debut,
+            ':duree' => $this->duree_minutes,
+            ':prix' => $this->prix,
+            ':langue' => $this->langue,
+            ':capacity' => $this->capacity_max,
+            ':guide_id' => $this->guide_id,
+            ':status' => $this->status,
+            ':image' => $this->tour_image
+        ]);
+
+        return $this->pdo->lastInsertId();
     }
 }
