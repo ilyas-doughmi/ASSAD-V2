@@ -1,14 +1,14 @@
 <?php
 require_once("../../../Classes/db.php");
 require_once("../../../Classes/User.php");
-require_once("../../../Classes/Admin.php");
+require_once("../../../Classes/guide.php");
 
 
 $pdo = new db();
-$admin = new Admin($pdo);
+$guide = new guide($pdo);
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){    
     $guide_id = $_POST["user_id"];
-    $admin->rejectGuide($guide_id);
+    $guide->rejectGuide($guide_id);
     echo "rejected Successfully";
 }
