@@ -130,6 +130,21 @@ class Habitat
         ]);
     }
 
+    public function editHabitat(int $id): bool
+    {
+        $query = "UPDATE habitat SET nom = :nom, description = :description, image = :image, zone = :zone, type_climat = :climat WHERE id = :id";
+        $stmt = $this->pdo->connect()->prepare($query);
+
+        return $stmt->execute([
+            ':nom' => $this->nom,
+            ':description' => $this->description,
+            ':image' => $this->image,
+            ':zone' => $this->zoneZoo,
+            ':climat' => $this->typeClimat,
+            ':id' => $id
+        ]);
+    }
+
     public function deleteHabitat($habitat_id): bool
     {
         $query = "DELETE FROM Habitat WHERE id = :habitat_id";
