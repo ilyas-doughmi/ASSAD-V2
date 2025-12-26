@@ -31,15 +31,17 @@
         <div class="max-w-7xl mx-auto flex flex-wrap gap-4 justify-center md:justify-between items-center">
             <div class="relative w-full md:w-64">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-500"></i>
-                <input type="text" placeholder="Rechercher une visite..." class="w-full bg-[#151515] border border-gray-700 rounded pl-10 pr-4 py-2 text-sm focus:border-gold outline-none">
+                <input type="text" id="searchInput" placeholder="Rechercher une visite..." class="w-full bg-[#151515] border border-gray-700 rounded pl-10 pr-4 py-2 text-sm focus:border-gold outline-none">
             </div>
             <div class="flex gap-4">
-                <select class="bg-[#151515] border border-gray-700 text-gray-300 text-sm rounded px-4 py-2 focus:border-gold outline-none">
-                    <option>Toutes les langues</option>
-                    <option>Français</option>
-                    <option>Anglais</option>
+                <select id="langueFilter" class="bg-[#151515] border border-gray-700 text-gray-300 text-sm rounded px-4 py-2 focus:border-gold outline-none">
+                    <option value="">Toutes les langues</option>
+                    <option value="Français">Français</option>
+                    <option value="Anglais">Anglais</option>
+                    <option value="Arabe">Arabe</option>
+                    <option value="Espagnol">Espagnol</option>
                 </select>
-                <input type="date" class="bg-[#151515] border border-gray-700 text-gray-300 text-sm rounded px-4 py-2 focus:border-gold outline-none">
+                <input type="date" id="dateFilter" class="bg-[#151515] border border-gray-700 text-gray-300 text-sm rounded px-4 py-2 focus:border-gold outline-none">
             </div>
         </div>
     </div>
@@ -52,10 +54,17 @@
     </div>
 
     <script>
+        let allTours = [];
+        
         showTours();
+        
+        // Add event listeners for filters
+        document.getElementById('searchInput').addEventListener('input', filterTours);
+        document.getElementById('langueFilter').addEventListener('change', filterTours);
+        document.getElementById('dateFilter').addEventListener('change', filterTours);
+        
         function showTours(){
             const tour_container = document.getElementById("tour_container");
-            let card;
             let data = new FormData();
             data.append("gettours","");
 
@@ -65,9 +74,22 @@
             })
             .then(response=>response.json())
             .then(data=>{
-                data.forEach(function(e){
-                    console.log(e);
-                    const card = `  <div class="bg-[#111] border border-white/5 rounded-xl overflow-hidden group hover:border-gold/50 transition">
+                allTours = data;
+                displayTours(allTours);
+            })
+        }
+        
+        function displayTours(tours){
+            const tour_container = document.getElementById("tour_container");
+            tour_container.innerHTML = "";
+            
+            if(tours.length === 0){
+                tour_container.innerHTML = '<div class="col-span-3 text-center py-12 text-gray-500">Aucune visite trouvée</div>';
+                return;
+            }
+            
+            tours.forEach(function(e){
+                const card = `<div class="bg-[#111] border border-white/5 rounded-xl overflow-hidden group hover:border-gold/50 transition">
             <div class="h-56 relative overflow-hidden">
                 <img src="${e.tour_image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                 <div class="absolute top-4 left-4 bg-green-900/80 text-green-400 text-[10px] font-bold px-2 py-1 rounded border border-green-500/30">DISPONIBLE</div>
@@ -83,12 +105,27 @@
                     <a href="tour_details.php?id=${e.id}" class="text-gold text-sm font-bold hover:underline">Voir détails <i class="fa-solid fa-arrow-right ml-1"></i></a>
                 </div>
             </div>
-        </div>`
+        </div>`;
 
-        tour_container.insertAdjacentHTML("afterbegin",card);
-                })
-            })
+                tour_container.insertAdjacentHTML("beforeend",card);
+            });
+        }
+        
+        function filterTours(){
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const langueFilter = document.getElementById('langueFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
             
+            let filteredTours = allTours.filter(tour => {
+                const matchesSearch = tour.titre.toLowerCase().includes(searchTerm) || 
+                                    tour.description.toLowerCase().includes(searchTerm);
+                const matchesLangue = !langueFilter || tour.langue === langueFilter;
+                const matchesDate = !dateFilter || tour.date_heure_debut.includes(dateFilter);
+                
+                return matchesSearch && matchesLangue && matchesDate;
+            });
+            
+            displayTours(filteredTours);
         }
     </script>
 </body>

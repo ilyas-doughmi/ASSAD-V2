@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asaad | L'Esprit de l'Atlas</title>
     
+    <?php
+    // Track views for Asaad (Lion of Atlas) - typically first animal in database
+    require_once('../Classes/db.php');
+    require_once('../Classes/Animal.php');
+    
+    $pdo = new db();
+    $animal = new Animal($pdo);
+    
+    // Increment views for Asaad (ID 1)
+    $animal->incrementViews(1);
+    ?>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">

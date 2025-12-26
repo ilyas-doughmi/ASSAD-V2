@@ -45,4 +45,13 @@ Class Admin extends User{
 
         return $result['count'];
     }
+
+    public function getTotalRevenue(): float
+    {
+        $query = "SELECT SUM(prix) as total FROM tours";
+        $stmt = $this->pdo->connect()->query($query);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $result['total'] ?? 0;
+    }
 }

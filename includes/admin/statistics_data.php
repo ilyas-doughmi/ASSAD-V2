@@ -43,3 +43,10 @@ if(isset($_POST["total_animals"])){
     echo $count;
     exit();
 }
+
+// Get total revenue
+if(isset($_POST["total_revenue"])){
+    $revenue = $admin->getTotalRevenue();
+    echo $revenue;
+    exit();
+}

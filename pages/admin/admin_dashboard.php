@@ -147,15 +147,13 @@ require_role("admin");
                     </div>
                     <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Revenus Billetterie</p>
                     <?php
-                    include_once '../../includes/db.php';
-                    $q = mysqli_query($conn, "SELECT prix FROM tours");
-                    $total = 0;
-                    foreach($q as $row){
-                        $total += $row['prix'];
-                    }
-                   
+                    require_once '../../Classes/db.php';
+                    $pdo = new db();
+                    $stmt = $pdo->connect()->query("SELECT SUM(prix) as total FROM tours");
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $total = $result['total'] ?? 0;
                     ?>
-                    <h3 class="text-3xl font-bold text-white"><?php echo $total; ?> <span class="text-sm font-normal text-gray-500">DH</span></h3>
+                    <h3 class="text-3xl font-bold text-white"><?php echo number_format($total, 2); ?> <span class="text-sm font-normal text-gray-500">DH</span></h3>
                     <p class="text-xs text-green-500 mt-2">CAN 2025 Boost</p>
                 </div>
             </div>
