@@ -17,7 +17,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $habitat->setDescription($_POST['description']);
     $habitat->setImage($_POST['image']);
 
-    $habitat->createHabitat();
+    if (isset($_POST['action']) && $_POST['action'] === 'update' && !empty($_POST['id'])) {
+        $habitat->editHabitat($_POST['id']);
+    } else {
+        $habitat->createHabitat();
+    }
 
     header('Location: ../../../pages/admin/manage_habitats.php');
     exit;
