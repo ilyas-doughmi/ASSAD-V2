@@ -1,44 +1,16 @@
 <?php
-include(dirname(__DIR__).'/includes/db.php');
+require_once(dirname(__DIR__).'/Classes/db.php');
+require_once(dirname(__DIR__).'/Classes/Animal.php');
 include(dirname(__DIR__).'/includes/auth/guard.php');
 
-$query = "SELECT a.*, h.nom as habitat_nom 
-          FROM Animal a 
-          JOIN Habitat h ON a.habitat_id = h.id 
-          WHERE 1=1";
+$db = new db();
+$animalModel = new Animal($db);
 
-$params = []; 
-$types = "";  
+$habitat = $_GET['habitat'] ?? null;
+$country = $_GET['country'] ?? null;
+$search = $_GET['search'] ?? null;
 
-if (!empty($_GET['habitat']) && $_GET['habitat'] != 'all') {
-    $query .= " AND h.nom = ?";
-    $params[] = $_GET['habitat'];
-    $types .= "s";
-}
-
-if (!empty($_GET['country']) && $_GET['country'] != 'all') {
-    $query .= " AND a.pays_origin = ?";
-    $params[] = $_GET['country'];
-    $types .= "s";
-}
-
-if (!empty($_GET['search'])) {
-    $query .= " AND (a.nom LIKE ? OR a.espece LIKE ?)";
-    $searchTerm = "%" . $_GET['search'] . "%";
-    $params[] = $searchTerm;
-    $params[] = $searchTerm;
-    $types .= "ss";
-}
-
-$stmt = mysqli_prepare($conn, $query);
-
-if (!empty($params)) {
-    mysqli_stmt_bind_param($stmt, $types, ...$params);
-}
-
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$animals = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$animals = $animalModel->searchAnimals($habitat, $country, $search);
 ?>
 
 <!DOCTYPE html>
