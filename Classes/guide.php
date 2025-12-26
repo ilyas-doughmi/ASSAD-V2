@@ -1,30 +1,43 @@
-<?php 
+<?php
 
-class guide extends User{
+class guide extends User
+{
     protected $isActive;
 
-    
+
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+
 
     public function setIsActive(int $guide_id): string
     {
-        $query = "UPDATE users SET isActive = 1 WHERE id = :guide_id";
-        $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(":guide_id",$guide_id);
+        if ($this->isActive == false) {
+            $query = "UPDATE users SET isActive = 1 WHERE id = :guide_id";
+            $stmt = $this->pdo->connect()->prepare($query);
+            $stmt->bindParam(":guide_id", $guide_id);
 
-        try{
-             $stmt->execute();
-             return "approved";
-        }catch(PDOException $e){
-            return $e->getMessage();
+            try {
+                $stmt->execute();
+                $this->isActive = true;
+                return "approved";
+            } catch (PDOException $e) {
+                return $e->getMessage();
+            }
         }
-       
+        else
+        {
+            return "already activated";
+        }
     }
 
     public function rejectGuide(int $guide_id): void
     {
         $query = "UPDATE users SET isBanned = 1 , isActive = 1 WHERE id = :guide_id";
         $stmt = $this->pdo->connect()->prepare($query);
-        $stmt->bindParam(":guide_id",$guide_id);
+        $stmt->bindParam(":guide_id", $guide_id);
         $stmt->execute();
     }
 
@@ -45,13 +58,13 @@ class guide extends User{
     public function getGuideStats(int $guide_id): array
     {
         $pdo = $this->pdo->connect();
-        
+
         $query1 = "SELECT COUNT(*) as count FROM tours WHERE guide_id = :guide_id AND MONTH(date_heure_debut) = MONTH(CURRENT_DATE())";
         $stmt1 = $pdo->prepare($query1);
         $stmt1->bindParam(":guide_id", $guide_id);
         $stmt1->execute();
         $res1 = $stmt1->fetch(PDO::FETCH_ASSOC);
-        
+
         $query2 = "SELECT COUNT(*) as count FROM reservation r JOIN tours t ON r.tour_id = t.id WHERE t.guide_id = :guide_id";
         $stmt2 = $pdo->prepare($query2);
         $stmt2->bindParam(":guide_id", $guide_id);
@@ -81,10 +94,10 @@ class guide extends User{
                   ORDER BY r.date_reservation DESC";
         $stmt = $this->pdo->connect()->prepare($query);
         $stmt->bindParam(":guide_id", $guide_id);
-        try{
+        try {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             return [];
         }
     }
