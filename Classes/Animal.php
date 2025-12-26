@@ -207,4 +207,51 @@ class Animal
 
         return $stmt->execute([':id' => $id]);
     }
+
+    public function incrementViews(int $id): bool
+    {
+        $query = "UPDATE animal SET vues = vues + 1 WHERE id = :id";
+        $stmt = $this->pdo->connect()->prepare($query);
+
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function getMostViewedAnimals(int $limit = 5): array
+    {
+        $query = "SELECT * FROM animal ORDER BY vues DESC LIMIT :limit";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function searchAnimals($habitat = null, $country = null, $search = null): array
+    {
+        $query = "SELECT a.*, h.nom as habitat_nom 
+                  FROM Animal a 
+                  JOIN Habitat h ON a.habitat_id = h.id 
+                  WHERE 1=1";
+
+        $params = [];
+
+        if (!empty($habitat) && $habitat != 'all') {
+            $query .= " AND h.nom = :habitat";
+            $params[':habitat'] = $habitat;
+        }
+
+        if (!empty($country) && $country != 'all') {
+            $query .= " AND a.pays_origin = :country";
+            $params[':country'] = $country;
+        }
+
+        if (!empty($search)) {
+            $query .= " AND (a.nom LIKE :search OR a.espece LIKE :search)";
+            $params[':search'] = "%" . $search . "%";
+        }
+
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
