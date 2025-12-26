@@ -81,7 +81,7 @@ class tour
     }
 
     //setters
-    
+
     public function setTitle(string $title): void
     {
         $this->title = $title;
@@ -132,15 +132,17 @@ class tour
         $this->tour_image = $tourImage;
     }
 
+    // database methods 
+
     public function getToursByGuide(int $guide_id): array
     {
         $query = "SELECT * FROM tours WHERE guide_id = :guide_id ORDER BY date_heure_debut DESC";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":guide_id", $guide_id);
-        try{
+        try {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             return [];
         }
     }
@@ -150,20 +152,21 @@ class tour
         $query = "SELECT * FROM tours WHERE guide_id = :guide_id AND date_heure_debut >= NOW() ORDER BY date_heure_debut ASC";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":guide_id", $guide_id);
-        try{
+        try {
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        }catch(PDOException $e){
+        } catch (PDOException $e) {
             return [];
         }
     }
 
-    public function createTour(){
+    public function createTour()
+    {
         $query = "INSERT INTO tours(titre,description,date_heure_debut,duree_minutes,prix,langue,capacity_max,guide_id,status,tour_image) 
                   VALUES(:titre, :description, :date_heure, :duree, :prix, :langue, :capacity, :guide_id, :status, :image)";
-        
+
         $stmt = $this->pdo->prepare($query);
-        
+
         $stmt->execute([
             ':titre' => $this->title,
             ':description' => $this->description,
@@ -178,5 +181,17 @@ class tour
         ]);
 
         return $this->pdo->lastInsertId();
+    }
+
+    public function getAllTour()
+    {
+        $query = "SELECT * FROM tours WHERE status = 'open' AND date_heure_debut >= NOW() ORDER BY date_heure_debut ASC";
+        $stmt = $this->pdo->connect()->query($query);
+        try {
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return $e->getMessage();
+        }
     }
 }
