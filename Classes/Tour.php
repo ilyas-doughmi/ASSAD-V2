@@ -194,4 +194,11 @@ class tour
             return $e->getMessage();
         }
     }
+
+    public function cancelTour($id)
+    {
+        $query = "UPDATE tours SET status = 'cancelled' WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        return $stmt->execute([':id' => $id]);
+    }
 }
