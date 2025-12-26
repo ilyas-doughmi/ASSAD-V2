@@ -1,5 +1,6 @@
 <?php
-require_once("../../db.php");
+require_once("../../../Classes/db.php");
+require_once("../../../Classes/tour_step.php");
 
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -8,21 +9,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $etape = $_POST["step_order"];
     $tour_id = $_POST["tour_id"];
 
+    $db = new db();
+    $pdo = $db->connect();
 
-    $query = "INSERT INTO tour_step(titre_etape,description_etape,order_etape,tour_id)
-    VALUES(?,?,?,?)";
-    $stmt = mysqli_prepare($conn,$query);
-
-    if($stmt === false){
-        die("die");
-    }
-
-    mysqli_stmt_bind_param($stmt,"ssii",$title,$description,$etape,$tour_id);
+    $tourStep = new tour_step($pdo);
+    $tourStep->setTitreEtape($title);
+    $tourStep->setDescriptionEtape($description);
+    $tourStep->setOrderEtape($etape);
+    $tourStep->setTourId($tour_id);
 
     try{
-        mysqli_stmt_execute($stmt);
+        $tourStep->addStep();
         echo "done";
-    }catch(mysqli_sql_exception){
+    }catch(Exception $e){
         echo "problem";
     }
     
