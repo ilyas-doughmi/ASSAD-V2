@@ -89,10 +89,15 @@
             }
             
             tours.forEach(function(e){
+                const remainingCapacity = e.remaining_capacity || 0;
+                const capacityClass = remainingCapacity > 10 ? 'text-green-400' : remainingCapacity > 0 ? 'text-yellow-400' : 'text-red-400';
+                const capacityText = remainingCapacity > 0 ? `${remainingCapacity} places` : 'Complet';
+                
                 const card = `<div class="bg-[#111] border border-white/5 rounded-xl overflow-hidden group hover:border-gold/50 transition">
             <div class="h-56 relative overflow-hidden">
                 <img src="${e.tour_image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                 <div class="absolute top-4 left-4 bg-green-900/80 text-green-400 text-[10px] font-bold px-2 py-1 rounded border border-green-500/30">DISPONIBLE</div>
+                <div class="absolute top-4 right-4 bg-black/80 ${capacityClass} text-[10px] font-bold px-2 py-1 rounded border border-white/20">${capacityText}</div>
             </div>
             <div class="p-6">
                 <h3 class="font-serif text-xl text-white mb-2 group-hover:text-gold transition">${e.titre}</h3>

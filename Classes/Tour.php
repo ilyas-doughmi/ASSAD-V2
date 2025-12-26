@@ -259,4 +259,50 @@ class tour
         
         return $tour;
     }
+
+    public function getRemainingCapacity(int $tour_id): int
+    {
+        // Get total capacity
+        $query1 = "SELECT capacity_max FROM tours WHERE id = :tour_id";
+        $stmt1 = $this->pdo->prepare($query1);
+        $stmt1->bindParam(':tour_id', $tour_id);
+        $stmt1->execute();
+        $result = $stmt1->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$result) {
+            return 0;
+        }
+        
+        $capacity_max = $result['capacity_max'];
+        
+        // Get total reserved
+        $query2 = "SELECT SUM(nb_personnes) as total_reserved FROM reservation WHERE tour_id = :tour_id";
+        $stmt2 = $this->pdo->prepare($query2);
+        $stmt2->bindParam(':tour_id', $tour_id);
+        $stmt2->execute();
+        $result2 = $stmt2->fetch(PDO::FETCH_ASSOC);
+        
+        $total_reserved = $result2['total_reserved'] ?? 0;
+        
+        return max(0, $capacity_max - $total_reserved);
+    }
+
+    public function getAllToursWithCapacity(): array
+    {
+        $query = "SELECT t.*, 
+                  (t.capacity_max - COALESCE(SUM(r.nb_personnes), 0)) as remaining_capacity
+                  FROM tours t
+                  LEFT JOIN reservation r ON t.id = r.tour_id
+                  WHERE t.status = 'open' AND t.date_heure_debut >= NOW()
+                  GROUP BY t.id
+                  ORDER BY t.date_heure_debut ASC";
+        
+        $stmt = $this->pdo->connect()->query($query);
+        
+        try {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
 }

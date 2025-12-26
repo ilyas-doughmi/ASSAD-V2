@@ -86,7 +86,7 @@ class guide extends User
 
     public function getGuideBookings(int $guide_id): array
     {
-        $query = "SELECT r.id as res_id, u.full_name, t.titre, t.date_heure_debut, t.prix, r.date_reservation 
+        $query = "SELECT r.id as res_id, r.nb_personnes, u.full_name, t.titre, t.date_heure_debut, t.prix, r.date_reservation 
                   FROM reservation r 
                   JOIN users u ON r.user_id = u.id 
                   JOIN tours t ON r.tour_id = t.id 
