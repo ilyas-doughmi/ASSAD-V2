@@ -105,9 +105,10 @@ class User
                 VALUES(:fullname,:email,:password,:role,0,:isactive)";
 
         $stmt = $this->pdo->connect()->prepare($query);
+        $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
+        
         $stmt->bindParam(":fullname", $this->full_name);
         $stmt->bindParam(":email", $this->email);
-        $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
         $stmt->bindParam(":password", $hashedPassword);
         $stmt->bindParam(":role", $this->role);
         $stmt->bindParam(":isactive", $isVisitor);

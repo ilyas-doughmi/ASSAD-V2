@@ -48,7 +48,9 @@ Class Admin extends User{
 
     public function getTotalRevenue(): float
     {
-        $query = "SELECT SUM(prix) as total FROM tours";
+        $query = "SELECT SUM(t.prix * r.nb_personnes) as total 
+                  FROM reservation r 
+                  JOIN tours t ON r.tour_id = t.id";
         $stmt = $this->pdo->connect()->query($query);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 

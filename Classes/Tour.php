@@ -297,9 +297,10 @@ class tour
                   GROUP BY t.id
                   ORDER BY t.date_heure_debut ASC";
         
-        $stmt = $this->pdo->connect()->query($query);
+        $stmt = $this->pdo->connect()->prepare($query);
         
         try {
+            $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             return [];
