@@ -157,6 +157,13 @@ require_role("guide");
                     <textarea name="description" id="edit_desc" rows="3" class="w-full bg-black border border-gray-700 rounded px-3 py-2 text-white focus:border-gold outline-none"></textarea>
                 </div>
 
+                <div class="border-t border-white/10 pt-4 mt-4">
+                    <h3 class="text-lg font-serif text-white mb-4">Étapes de la visite</h3>
+                    <div id="edit_steps_container" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                        <!-- Steps will be loaded here -->
+                    </div>
+                </div>
+
                 <div class="pt-4 flex justify-end gap-3">
                     <button type="button" onclick="closeModal()" class="px-4 py-2 border border-gray-700 text-gray-400 rounded hover:text-white transition">Annuler</button>
                     <button type="submit" class="px-6 py-2 bg-gold text-black font-bold rounded hover:bg-white transition">Sauvegarder</button>
@@ -370,6 +377,100 @@ require_role("guide");
             document.getElementById('edit_capacite').value = data.capacity_max;
             document.getElementById('edit_desc').value = data.description;
             document.getElementById('edit_image').value = data.tour_image || '';
+
+            fetchSteps(data.id);
+        }
+
+        function fetchSteps(tourId) {
+            const container = document.getElementById('edit_steps_container');
+            container.innerHTML = '<p class="text-gray-500 text-sm">Chargement des étapes...</p>';
+            
+            let formData = new FormData();
+            formData.append("show_steps", tourId);
+
+            fetch("../../includes/guide/visite_action/steps_visite.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(steps => {
+                container.innerHTML = '';
+                if(steps.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Aucune étape définie.</p>';
+                    return;
+                }
+                
+                steps.forEach(step => {
+                    const stepHtml = `
+                        <div class="bg-black/50 border border-gray-800 rounded p-3">
+                            <div class="flex justify-between items-start gap-2 mb-2">
+                                <input type="text" value="${step.titre_etape}" id="step_title_${step.id}" class="bg-transparent border-b border-gray-700 text-white text-sm font-bold w-full focus:border-gold outline-none">
+                                <span class="text-xs text-gray-500 whitespace-nowrap">Ordre: <input type="number" value="${step.order_etape}" id="step_order_${step.id}" class="bg-transparent border-b border-gray-700 w-8 text-center focus:border-gold outline-none"></span>
+                            </div>
+                            <textarea id="step_desc_${step.id}" rows="2" class="w-full bg-transparent border border-gray-800 rounded p-2 text-xs text-gray-400 focus:border-gold outline-none">${step.description_etape}</textarea>
+                            <div class="flex justify-end mt-2 gap-2">
+                                <button type="button" onclick="deleteStep(${step.id}, ${tourId})" class="text-xs bg-red-900/20 text-red-500 px-2 py-1 rounded hover:bg-red-600 hover:text-white transition">Supprimer</button>
+                                <button type="button" onclick="saveStep(${step.id}, ${tourId})" class="text-xs bg-gold/10 text-gold px-2 py-1 rounded hover:bg-gold hover:text-black transition">Enregistrer</button>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', stepHtml);
+                });
+            });
+        }
+
+        function deleteStep(stepId, tourId) {
+            if(!confirm("Êtes-vous sûr de vouloir supprimer cette étape ?")) return;
+
+            let formData = new FormData();
+            formData.append("step_id", stepId);
+
+            fetch("../../includes/guide/visite_action/delete_tourSteps.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                if(data.trim() === "done") {
+                    fetchSteps(tourId); // Refresh the list
+                } else {
+                    alert("Erreur lors de la suppression.");
+                }
+            });
+        }
+
+        function saveStep(stepId, tourId) {
+            const title = document.getElementById(`step_title_${stepId}`).value;
+            const desc = document.getElementById(`step_desc_${stepId}`).value;
+            const order = document.getElementById(`step_order_${stepId}`).value;
+
+            let formData = new FormData();
+            formData.append("step_id", stepId);
+            formData.append("step_title", title);
+            formData.append("step_description", desc);
+            formData.append("step_order", order);
+            formData.append("tour_id", tourId);
+
+            fetch("../../includes/guide/visite_action/edit_tourSteps.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                if(data.trim() === "done") {
+                    // Optional: Show success feedback
+                    const btn = document.querySelector(`button[onclick="saveStep(${stepId}, ${tourId})"]`);
+                    const originalText = btn.innerText;
+                    btn.innerText = "Sauvegardé !";
+                    btn.classList.add("bg-green-500", "text-white");
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.classList.remove("bg-green-500", "text-white");
+                    }, 2000);
+                } else {
+                    alert("Erreur lors de la mise à jour.");
+                }
+            });
         }
 
         function closeModal() {
