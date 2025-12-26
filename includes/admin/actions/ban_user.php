@@ -1,10 +1,10 @@
 <?php
 require_once("../../../Classes/db.php");
-require_once("../../../Classes/User.php");
+require_once("../../../Classes/Visitor.php");
 
 
 $pdo = new db();
-$user = new User($pdo);
+$user = new Visitor($pdo);
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     $user_id = $_POST["user_id"];
