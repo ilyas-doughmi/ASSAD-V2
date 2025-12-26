@@ -145,20 +145,21 @@ $message = "";
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div class="space-y-1">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1">Nom Complet</label>
-                        <input type="text" name="nom" placeholder="Achraf Chaoub" class="atlas-input w-full bg-[#111] border border-gray-800 text-gray-200 text-sm rounded-lg py-3 px-4 focus:outline-none transition-all placeholder-gray-600">
+                        <input type="text" name="nom" required pattern="[a-zA-ZÀ-ÿ\s\-]{2,50}" title="Lettres et espaces uniquement (2-50 caractères)" placeholder="Achraf Chaoub" class="atlas-input w-full bg-[#111] border border-gray-800 text-gray-200 text-sm rounded-lg py-3 px-4 focus:outline-none transition-all placeholder-gray-600">
                     </div>
                     <div class="space-y-1">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1">Email</label>
-                        <input type="email" name="email" placeholder="nom@exemple.com" class="atlas-input w-full bg-[#111] border border-gray-800 text-gray-200 text-sm rounded-lg py-3 px-4 focus:outline-none transition-all placeholder-gray-600">
+                        <input type="email" name="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" title="Adresse email valide requise" placeholder="nom@exemple.com" class="atlas-input w-full bg-[#111] border border-gray-800 text-gray-200 text-sm rounded-lg py-3 px-4 focus:outline-none transition-all placeholder-gray-600">
                     </div>
                 </div>
 
                 <div class="space-y-1">
                     <label class="text-xs font-semibold text-gray-500 uppercase tracking-widest ml-1">Mot de passe</label>
                     <div class="relative">
-                        <input name="password" type="password" id="password" class="atlas-input w-full bg-[#111] border border-gray-800 text-gray-200 text-sm rounded-lg py-3 px-4 focus:outline-none transition-all placeholder-gray-600">
+                        <input name="password" type="password" id="password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}" title="8+ caractères, 1 majuscule, 1 minuscule, 1 chiffre" class="atlas-input w-full bg-[#111] border border-gray-800 text-gray-200 text-sm rounded-lg py-3 px-4 focus:outline-none transition-all placeholder-gray-600">
                         <button type="button" class="absolute right-3 top-3 text-gray-500 hover:text-atlas-gold toggle-pass"><i class="fa-regular fa-eye"></i></button>
                     </div>
+                    <p class="text-xs text-gray-500 mt-1">Min. 8 caractères avec 1 majuscule, 1 minuscule et 1 chiffre</p>
                 </div>
 
 

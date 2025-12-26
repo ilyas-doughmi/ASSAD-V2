@@ -137,4 +137,28 @@ class Habitat
 
         return $stmt->execute([':habitat_id' => $habitat_id]);
     }
+
+    public function editHabitat(int $id): bool
+    {
+        $query = "
+            UPDATE habitat SET
+                nom = :nom,
+                description = :description,
+                image = :image,
+                zone = :zone,
+                type_climat = :climat
+            WHERE id = :id
+        ";
+
+        $stmt = $this->pdo->connect()->prepare($query);
+
+        return $stmt->execute([
+            ':nom' => $this->nom,
+            ':description' => $this->description,
+            ':image' => $this->image,
+            ':zone' => $this->zoneZoo,
+            ':climat' => $this->typeClimat,
+            ':id' => $id
+        ]);
+    }
 }

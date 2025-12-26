@@ -201,4 +201,62 @@ class tour
         $stmt = $this->pdo->prepare($query);
         return $stmt->execute([':id' => $id]);
     }
+
+    public function editTour(int $id): bool
+    {
+        $query = "UPDATE tours SET 
+                    titre = :titre, 
+                    description = :description, 
+                    date_heure_debut = :date_heure, 
+                    duree_minutes = :duree, 
+                    prix = :prix, 
+                    langue = :langue, 
+                    capacity_max = :capacity, 
+                    status = :status, 
+                    tour_image = :image 
+                  WHERE id = :id";
+        
+        $stmt = $this->pdo->prepare($query);
+        
+        return $stmt->execute([
+            ':titre' => $this->title,
+            ':description' => $this->description,
+            ':date_heure' => $this->date_heure_debut,
+            ':duree' => $this->duree_minutes,
+            ':prix' => $this->prix,
+            ':langue' => $this->langue,
+            ':capacity' => $this->capacity_max,
+            ':status' => $this->status,
+            ':image' => $this->tour_image,
+            ':id' => $id
+        ]);
+    }
+
+    public function getTourById(int $id): ?array
+    {
+        $query = "SELECT * FROM tours WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        
+        $tour = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$tour) {
+            return null;
+        }
+        
+        $this->id = $tour['id'];
+        $this->setTitle($tour['titre']);
+        $this->setDescription($tour['description']);
+        $this->setDateHeureDebut($tour['date_heure_debut']);
+        $this->setDureeMinutes($tour['duree_minutes']);
+        $this->setPrix($tour['prix']);
+        $this->setLangue($tour['langue']);
+        $this->setCapacityMax($tour['capacity_max']);
+        $this->setStatus($tour['status']);
+        $this->setGuideId($tour['guide_id']);
+        $this->setTourImage($tour['tour_image']);
+        
+        return $tour;
+    }
 }

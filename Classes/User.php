@@ -81,11 +81,25 @@ class User
             $isVisitor = 0;
         }
 
+        // Email validation with regex
         if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
+        
+        // Additional email regex validation
+        if (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $this->email)) {
+            return false;
+        }
 
+        // Name validation - only letters, spaces, and hyphens
+        if (!preg_match('/^[a-zA-ZÀ-ÿ\s\-]{2,50}$/u', $this->full_name)) {
+            return false;
+        }
 
+        // Password validation - at least 8 characters, 1 uppercase, 1 lowercase, 1 number
+        if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/', $this->password)) {
+            return false;
+        }
 
         $query = "INSERT INTO users(full_name,email,password,role,isBanned,isActive)
                 VALUES(:fullname,:email,:password,:role,0,:isactive)";
@@ -93,7 +107,8 @@ class User
         $stmt = $this->pdo->connect()->prepare($query);
         $stmt->bindParam(":fullname", $this->full_name);
         $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":password", password_hash($this->password,PASSWORD_DEFAULT));
+        $hashedPassword = password_hash($this->password, PASSWORD_DEFAULT);
+        $stmt->bindParam(":password", $hashedPassword);
         $stmt->bindParam(":role", $this->role);
         $stmt->bindParam(":isactive", $isVisitor);
 
@@ -103,12 +118,6 @@ class User
         } catch (PDOException $e) {
             return false;
         }
-
-
-
-
-
-        return true;
     }
 
     public function signin()

@@ -160,9 +160,29 @@ require_role("admin");
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
                 
-         
+                <!-- Most Viewed Animals -->
+                <div class="bg-dark-card border border-white/5 rounded-xl p-0 shadow-lg flex flex-col">
+                    <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                        <h3 class="font-serif text-lg text-white font-bold">Animaux Populaires</h3>
+                        <i class="fa-solid fa-eye text-gold"></i>
+                    </div>
+
+                    <div id="most_viewed_container" class="flex-1 overflow-y-auto p-4 space-y-3">                                         
+                    </div>
+                </div>
+
+                <!-- Most Reserved Tours -->
+                <div class="bg-dark-card border border-white/5 rounded-xl p-0 shadow-lg flex flex-col">
+                    <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                        <h3 class="font-serif text-lg text-white font-bold">Visites Populaires</h3>
+                        <i class="fa-solid fa-fire text-gold"></i>
+                    </div>
+
+                    <div id="most_reserved_container" class="flex-1 overflow-y-auto p-4 space-y-3">                                         
+                    </div>
+                </div>
 
                 <div class="bg-dark-card border border-white/5 rounded-xl p-0 shadow-lg flex flex-col">
                     <div class="p-6 border-b border-white/5 flex justify-between items-center">
@@ -184,6 +204,9 @@ require_role("admin");
         getAnimalsCount();
         getNotActiveUsers();
         getHabitatsCount();
+        getMostViewedAnimals();
+        getMostReservedTours();
+        
         function getUsersCount(){
             const users_text = document.getElementById("users_text");
             let data = new FormData();
@@ -196,6 +219,83 @@ require_role("admin");
         .then(data=>{
             users_text.innerText = data;
         })
+        }
+
+        function getMostViewedAnimals(){
+            const container = document.getElementById("most_viewed_container");
+            container.innerHTML = "";
+            let data = new FormData();
+            data.append("most_viewed_animals", "");
+            data.append("limit", "5");
+            
+            fetch("../../includes/admin/statistics_data.php",{
+                method: "POST",
+                body: data
+            })
+            .then(response=>response.json())
+            .then(data=>{
+                if(data.length === 0){
+                    container.innerHTML = '<p class="text-gray-500 text-sm text-center">Aucune donnée</p>';
+                    return;
+                }
+                data.forEach(function(animal){
+                    const card = `
+                        <div class="bg-black/40 p-3 rounded-lg border border-white/5 flex items-center gap-3">
+                            <img src="${animal.image}" class="w-12 h-12 rounded object-cover" alt="${animal.nom}">
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-white">${animal.nom}</p>
+                                <p class="text-xs text-gray-500">${animal.espece}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-gold font-bold">${animal.vues || 0}</p>
+                                <p class="text-xs text-gray-500">vues</p>
+                            </div>
+                        </div>`;
+                    container.insertAdjacentHTML("beforeend", card);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="text-red-500 text-sm text-center">Erreur de chargement</p>';
+            });
+        }
+
+        function getMostReservedTours(){
+            const container = document.getElementById("most_reserved_container");
+            container.innerHTML = "";
+            let data = new FormData();
+            data.append("most_reserved_tours", "");
+            data.append("limit", "5");
+            
+            fetch("../../includes/admin/statistics_data.php",{
+                method: "POST",
+                body: data
+            })
+            .then(response=>response.json())
+            .then(data=>{
+                if(data.length === 0){
+                    container.innerHTML = '<p class="text-gray-500 text-sm text-center">Aucune donnée</p>';
+                    return;
+                }
+                data.forEach(function(tour){
+                    const card = `
+                        <div class="bg-black/40 p-3 rounded-lg border border-white/5">
+                            <p class="text-sm font-bold text-white mb-1">${tour.titre}</p>
+                            <div class="flex justify-between items-center">
+                                <p class="text-xs text-gray-500">${tour.langue}</p>
+                                <div class="text-right">
+                                    <p class="text-xs text-gold font-bold">${tour.reservation_count || 0}</p>
+                                    <p class="text-xs text-gray-500">réservations</p>
+                                </div>
+                            </div>
+                        </div>`;
+                    container.insertAdjacentHTML("beforeend", card);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="text-red-500 text-sm text-center">Erreur de chargement</p>';
+            });
         }
 
          function getNotActiveUsers(){

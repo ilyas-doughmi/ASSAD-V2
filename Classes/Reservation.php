@@ -4,6 +4,7 @@ class reservation{
     private $id;
     private $tour_id;
     private $user_id;
+    private $nb_personnes;
     private $reservationDate;
     private $pdo;
 
@@ -25,6 +26,10 @@ class reservation{
         return $this->user_id;
     }
 
+    public function getNbPersonnes() {
+        return $this->nb_personnes;
+    }
+
     public function getReservationDate() {
         return $this->reservationDate;
     }
@@ -42,16 +47,21 @@ class reservation{
         $this->user_id = $user_id;
     }
 
+    public function setNbPersonnes($nb_personnes) {
+        $this->nb_personnes = $nb_personnes;
+    }
+
     public function setReservationDate($reservationDate) {
         $this->reservationDate = $reservationDate;
     }
 
     public function createReservation(){
-        $query = "INSERT INTO reservation(user_id, tour_id) VALUES(:user_id, :tour_id)";
+        $query = "INSERT INTO reservation(user_id, tour_id, nb_personnes) VALUES(:user_id, :tour_id, :nb_personnes)";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([
             ':user_id' => $this->user_id,
-            ':tour_id' => $this->tour_id
+            ':tour_id' => $this->tour_id,
+            ':nb_personnes' => $this->nb_personnes
         ]);
     }
 }

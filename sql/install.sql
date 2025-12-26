@@ -66,6 +66,7 @@ CREATE TABLE Reservation (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     tour_id INT,
+    nb_personnes INT DEFAULT 1,
     date_reservation DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id)
