@@ -14,6 +14,14 @@ class tour
     protected $guide_id;
     protected $tour_image;
 
+    protected $pdo;
+
+
+    public function __construct($pdo)
+    {
+        $this->pdo = $pdo;
+    }
+
 
     // getters
 
@@ -122,5 +130,31 @@ class tour
     public function setTourImage(string $tourImage): void
     {
         $this->tour_image = $tourImage;
+    }
+
+    public function getToursByGuide(int $guide_id): array
+    {
+        $query = "SELECT * FROM tours WHERE guide_id = :guide_id ORDER BY date_heure_debut DESC";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":guide_id", $guide_id);
+        try{
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch(PDOException $e){
+            return [];
+        }
+    }
+
+    public function getUpcomingTours(int $guide_id): array
+    {
+        $query = "SELECT * FROM tours WHERE guide_id = :guide_id AND date_heure_debut >= NOW() ORDER BY date_heure_debut ASC";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":guide_id", $guide_id);
+        try{
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }catch(PDOException $e){
+            return [];
+        }
     }
 }
