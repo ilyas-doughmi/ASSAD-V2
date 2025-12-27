@@ -176,4 +176,20 @@ class User
     }
 
 
+    public function unbanUser(int $id): bool
+    {
+        $query = "UPDATE users SET isBanned = 0 WHERE id = :id";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":id", $id);
+        return $stmt->execute();
+    }
+
+    public function getUserById($id)
+    {
+        $query = "SELECT * FROM users WHERE id = :id";
+        $stmt = $this->pdo->connect()->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
