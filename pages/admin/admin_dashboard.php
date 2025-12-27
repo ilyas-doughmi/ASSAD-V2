@@ -147,13 +147,12 @@ require_role("admin");
                     </div>
                     <p class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Revenus Billetterie</p>
                     <?php
-                    include_once '../../includes/db.php';
-                    $q = mysqli_query($conn, "SELECT prix FROM tours");
-                    $total = 0;
-                    foreach($q as $row){
-                        $total += $row['prix'];
-                    }
-                   
+                    require_once '../../Classes/db.php';
+                    require_once '../../Classes/Tour.php';
+                    $pdo = new db();
+                    $db = $pdo->connect();
+                    $tour = new tour($db);
+                    $total = $tour->getTotalRevenue();
                     ?>
                     <h3 class="text-3xl font-bold text-white"><?php echo $total; ?> <span class="text-sm font-normal text-gray-500">DH</span></h3>
                     <p class="text-xs text-green-500 mt-2">CAN 2025 Boost</p>
