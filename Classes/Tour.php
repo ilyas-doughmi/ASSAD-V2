@@ -264,17 +264,6 @@ class tour
     {
         $query = "SELECT * FROM tours WHERE id = :id";
         $stmt = $this->pdo->connect()->prepare($query); 
-        // Note: Using connect() here to be safe if $this->pdo is wrapper. 
-        // If $this->pdo is direct PDO, connect() won't exist.
-        // Wait, getTotalRevenue uses connect(). EditTour uses prepare() directly.
-        // This implies inconsistent usage in the class. 
-        // Start by checking strict usage.
-        // I will use $this->pdo->prepare() and assume the constructor gets a PDO object for now, 
-        // but verify db.php first. 
-        // If db.php is just "class db { public function connect() { return new PDO... } }", 
-        // then passing new db() to Tour will FAIL on $this->pdo->prepare().
-        // Passing $db->connect() to Tour will FAIL on $this->pdo->connect()->...
-        // I'll stick to one pattern.
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
