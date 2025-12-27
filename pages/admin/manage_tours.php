@@ -129,9 +129,16 @@ require_role("admin");
                     </thead>
                     <tbody class="divide-y divide-white/5">
                         <?php
-                        include '../../includes/db.php';
-                        $q = mysqli_query($conn, "SELECT * FROM tours");
-                        while($row = mysqli_fetch_assoc($q)){
+                        require_once "../../Classes/db.php";
+                        require_once "../../Classes/Tour.php";
+
+                        $pdo = new db();
+                        $db = $pdo->connect();
+
+                        $tour = new tour($db);
+                        $tours = $tour->getAllTours();
+
+                        foreach($tours as $row){
                             echo '<tr>';
                             echo '<td class="px-6 py-4">'.$row['id'].'</td>';
                             echo '<td class="px-6 py-4">'.$row['titre'].'</td>';
