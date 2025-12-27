@@ -260,7 +260,7 @@ class tour
         }
     }
 
-    public function getTourById($id)
+    public function getTourById(int $id)
     {
         $query = "SELECT * FROM tours WHERE id = :id";
         $stmt = $this->pdo->connect()->prepare($query); 
