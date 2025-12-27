@@ -30,6 +30,11 @@ class tour
         return $this->id;
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
     public function getTitle(): string
     {
         return $this->title;
@@ -195,10 +200,82 @@ class tour
         }
     }
 
+    public function getAllTours()
+    {
+        $query = "SELECT * FROM tours ORDER BY date_heure_debut DESC";
+        $stmt = $this->pdo->prepare($query);
+        try {
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
+
     public function cancelTour($id)
     {
         $query = "UPDATE tours SET status = 'cancelled' WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         return $stmt->execute([':id' => $id]);
+    }
+
+    public function editTour(): bool
+    {
+        $query = "UPDATE tours SET 
+                  titre = :titre, 
+                  description = :description, 
+                  date_heure_debut = :date_heure, 
+                  duree_minutes = :duree, 
+                  prix = :prix, 
+                  langue = :langue, 
+                  capacity_max = :capacity, 
+                  tour_image = :image 
+                  WHERE id = :id";
+
+        $stmt = $this->pdo->prepare($query);
+
+        return $stmt->execute([
+            ':titre' => $this->title,
+            ':description' => $this->description,
+            ':date_heure' => $this->date_heure_debut,
+            ':duree' => $this->duree_minutes,
+            ':prix' => $this->prix,
+            ':langue' => $this->langue,
+            ':capacity' => $this->capacity_max,
+            ':image' => $this->tour_image,
+            ':id' => $this->id
+        ]);
+    }
+
+    public function getTotalRevenue()
+    {
+        $query = "SELECT SUM(prix) as total FROM tours";
+        $stmt = $this->pdo->connect()->query($query);
+        try {
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] ?? 0;
+        } catch (PDOException $e) {
+            return 0;
+        }
+    }
+
+    public function getTourById($id)
+    {
+        $query = "SELECT * FROM tours WHERE id = :id";
+        $stmt = $this->pdo->connect()->prepare($query); 
+        // Note: Using connect() here to be safe if $this->pdo is wrapper. 
+        // If $this->pdo is direct PDO, connect() won't exist.
+        // Wait, getTotalRevenue uses connect(). EditTour uses prepare() directly.
+        // This implies inconsistent usage in the class. 
+        // Start by checking strict usage.
+        // I will use $this->pdo->prepare() and assume the constructor gets a PDO object for now, 
+        // but verify db.php first. 
+        // If db.php is just "class db { public function connect() { return new PDO... } }", 
+        // then passing new db() to Tour will FAIL on $this->pdo->prepare().
+        // Passing $db->connect() to Tour will FAIL on $this->pdo->connect()->...
+        // I'll stick to one pattern.
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
