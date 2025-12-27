@@ -1,17 +1,31 @@
 <?php
-include(dirname(__DIR__).'/includes/db.php');
+include('../includes/db.php');
+require_once('../Classes/Tour.php');
+require_once('../Classes/User.php');
+
 session_start();
 if(!isset($_SESSION['id'])){
     header('Location: /assad-2025/login.php');
     exit;
 }
+
 $user_id = $_SESSION['id'];
-$tour_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$tour = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM tours WHERE id = $tour_id"));
-$user = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM users WHERE id = $user_id"));
-$qty = 1;
+$tour_id = 0;
+if(isset($_GET['id'])){
+    $tour_id = $_GET['id'];
+}
+
+$pdo_db = new db();
+$db = $pdo_db->connect();
+
+$tourObj = new tour($db);
+$tour = $tourObj->getTourById($tour_id);
+
+$userObj = new User($pdo_db);
+$user = $userObj->getUserById($user_id);
+
 $prix = $tour['prix'];
-$total = $prix * $qty;
+$total = $prix;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -49,7 +63,7 @@ $total = $prix * $qty;
             <div class="text-right">
                 <h2 class="text-4xl font-bold text-gray-200">FACTURE</h2>
                 <p class="text-gray-500 font-bold mt-1">#INV-<?= $tour_id ?></p>
-                <p class="text-sm text-gray-500">Date: <?= date('d/m/Y') ?></p>
+                <p class="text-sm text-gray-500">Date: <?= $tour['date_heure_debut'] ?></p>
             </div>
         </div>
         <div class="mb-10 flex justify-between">
@@ -79,8 +93,8 @@ $total = $prix * $qty;
                         <p class="text-xs text-gray-500">Guide: -</p>
                     </td>
                     <td class="py-4 px-4 text-center">1</td>
-                    <td class="py-4 px-4 text-right"><?= number_format($prix,2) ?> DH</td>
-                    <td class="py-4 px-4 text-right font-bold"><?= number_format($total,2) ?> DH</td>
+                    <td class="py-4 px-4 text-right"><?= $prix ?> DH</td>
+                    <td class="py-4 px-4 text-right font-bold"><?= $total ?> DH</td>
                 </tr>
             </tbody>
         </table>
@@ -88,7 +102,7 @@ $total = $prix * $qty;
             <div class="w-1/2">
                 <div class="flex justify-between py-4 border-t-2 border-[#C6A87C] mt-2">
                     <span class="text-lg font-serif font-bold">Total</span>
-                    <span class="text-xl font-bold text-[#C6A87C]"><?= number_format($total,2) ?> DH</span>
+                    <span class="text-xl font-bold text-[#C6A87C]"><?= $total ?> DH</span>
                 </div>
             </div>
         </div>
