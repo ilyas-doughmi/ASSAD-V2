@@ -1,19 +1,17 @@
 <?php
-require_once("../../db.php");
+require_once("../../../Classes/db.php");
+require_once("../../../Classes/User.php");
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     $user_id = $_POST["user_id"];
     
-    $query = "UPDATE users SET isBanned = 0 WHERE id = ?";
+    $pdo = new db();
+    $db = $pdo->connect();
+    $user = new User($pdo); 
 
-    $stmt = mysqli_prepare($conn,$query);
-    
-    if ($stmt === false) {
-        die("Error prepare statement" . mysqli_error($conn));
+    if ($user->unbanUser($user_id)) {
+        echo "Active Successfully";
+    } else {
+        echo "Error activating account";
     }
-
-    mysqli_stmt_bind_param($stmt,"i",$user_id);
-    mysqli_stmt_execute($stmt);
-
-    echo "Active Successfully";
 }
